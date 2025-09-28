@@ -3,6 +3,7 @@
 - You can leverage shadCN component library, It has been already installed in the code base. You need to install the required components directly.
 - The whole design should be completely responsive.
 - Only use tailwind CSS, to style the components.
+- Please create a branch called `solution/<your_name>`
 
 # Scoring
 - You will be judged on 
