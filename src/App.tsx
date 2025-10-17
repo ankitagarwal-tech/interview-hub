@@ -1,34 +1,65 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import ProductCard from "./components/ProductCard";
+import { products } from "./products";
+import { Cart } from "./components/Cart/Cart";
+
+export interface Product {
+  id: number;
+  title: string;
+  thumbnail: string;
+  price: number;
+  quantity?: number;
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [itemsinCart, setItemsInCart] = useState<Product[]>([]);
+
+  function updateCart({ id, quantity }: { id: number; quantity: number }) {
+    const product = products.find((p) => p.id === id);
+    setItemsInCart((prev) => {
+      const existingProduct = prev.find((p) => p.id === id);
+      if (existingProduct) {
+        const newQuantity = (existingProduct.quantity || 0) + quantity;
+
+        if (newQuantity <= 0) {
+          return prev.filter((p) => p.id !== id);
+        }
+
+        return prev.map((p) =>
+          p.id === id ? { ...p, quantity: newQuantity } : p
+        );
+      } else {
+        if (quantity > 0) {
+          return [...prev, { ...product!, quantity }];
+        }
+        return prev;
+      }
+    });
+  }
 
   return (
-    <>
+    <div className="flex flex-col gap-4 m-h-auto p-8">
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Cart itemsInCart={itemsinCart} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="flex gap-4 flex-wrap p-8">
+        {products.map((product) => {
+          const cartItem = itemsinCart.find((item) => item.id === product.id);
+          return (
+            <ProductCard
+              key={product.id}
+              title={product.title}
+              imgUrl={product.thumbnail}
+              price={product.price}
+              updateCart={updateCart}
+              id={product.id}
+              quantity={cartItem?.quantity ?? 0}
+            />
+          );
+        })}
       </div>
-      <p className="read-the-docs bg-red-400">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
 export default App
