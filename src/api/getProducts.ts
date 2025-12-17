@@ -1,3 +1,5 @@
+import type { IProduct } from "@/interface/interface";
+
 interface Payload {
     skip: number;
     limit?: number;
@@ -8,7 +10,7 @@ interface Response {
     limit: number;
     skip: number;
     total: number;
-    products: Array<any>; 
+    products: Array<IProduct>; 
 }
 
 export const getProducts = async (payload: Payload): Promise<Response> => {

@@ -1,27 +1,60 @@
 import { useMemo } from "react";
 import { Button } from "./ui/button";
 import { ButtonGroup } from "./ui/button-group";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import type { ICartItem, IProduct } from "@/interface/interface";
 
-export const ProductCard = ({ product, cart, addToCart , removeFromCart}: { product: any, cart: any[], addToCart: any, removeFromCart: any }) => {
-const quantityInCart = useMemo(() => {
+export const ProductCard = ({
+  product,
+  cart,
+  addToCart,
+  removeFromCart,
+}: {
+  product: IProduct;
+  cart: ICartItem[];
+  addToCart: (product: IProduct) => void;
+  removeFromCart: (product: IProduct) => void;
+}) => {
+  const quantityInCart = useMemo(() => {
     const item = cart.find((item) => item.id === product.id);
     return item ? item.quantity : 0;
-}, [cart, product.id]);
+  }, [cart, product.id]);
 
   return (
-    <Card className="w-72">
-      <img src={product.thumbnail} alt={product.title} />
+    <Card className="w-full min-w-0 max-w-[320px] md:max-w-none">
+      <img
+        src={product.thumbnail}
+        alt={product.title}
+        className="w-full h-48 object-cover"
+      />
       <CardHeader>
-        <CardTitle>{product.title}</CardTitle>
-        <CardDescription>{product.description}</CardDescription>
+        <CardTitle className="inline-block truncate max-w-[100%]">
+          {product.title}
+        </CardTitle>
+        <CardDescription className="h-20 overflow-hidden text-ellipsis">
+          {product.description}
+        </CardDescription>
         <div>{product.price}</div>
       </CardHeader>
       <CardFooter className="flex justify-center">
         <ButtonGroup>
-        <Button onClick={() => removeFromCart(product)} disabled={quantityInCart === 0} className={'dis'} >-</Button>
-         <div className="mx-2">{quantityInCart}</div>
-        <Button onClick={() => addToCart(product)}>+</Button>
+          <Button
+            onClick={() => removeFromCart(product)}
+            disabled={quantityInCart === 0}
+            className="cursor-pointer"
+          >
+            -
+          </Button>
+          <div className="mx-2">{quantityInCart}</div>
+          <Button onClick={() => addToCart(product)} className="cursor-pointer">
+            +
+          </Button>
         </ButtonGroup>
       </CardFooter>
     </Card>
