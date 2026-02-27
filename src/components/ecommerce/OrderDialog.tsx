@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useCart } from '../../context/CartContext';
-import type { Product } from '../../hooks/useProducts';
 import {
     Dialog,
     DialogContent,
@@ -15,11 +14,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ShoppingCart } from 'lucide-react';
 
-interface OrderDialogProps {
-    products: Product[];
-}
-
-export const OrderDialog = ({ products }: OrderDialogProps) => {
+export const OrderDialog = () => {
     const { cart, totalItems, clearCart } = useCart();
     const [open, setOpen] = useState(false);
 
@@ -32,18 +27,12 @@ export const OrderDialog = ({ products }: OrderDialogProps) => {
     });
 
     const cartProducts = useMemo(() => {
-        return Object.entries(cart).map(([productId, quantity]) => {
-            const product = products.find((p) => p.id === Number(productId));
-            return {
-                product,
-                quantity,
-            };
-        }).filter((item) => item.product !== undefined);
-    }, [cart, products]);
+        return Object.values(cart);
+    }, [cart]);
 
     const totalPrice = useMemo(() => {
         return cartProducts.reduce((sum, { product, quantity }) => {
-            return sum + (product?.price || 0) * quantity;
+            return sum + (product.price || 0) * quantity;
         }, 0);
     }, [cartProducts]);
 
@@ -97,13 +86,13 @@ export const OrderDialog = ({ products }: OrderDialogProps) => {
                     <form onSubmit={handleConfirmOrder} className="flex flex-col gap-6">
                         <div className="flex flex-col gap-3 max-h-[150px] overflow-y-auto pr-2">
                             {cartProducts.map(({ product, quantity }) => (
-                                <div key={product!.id} className="flex justify-between items-center text-sm border-b pb-2">
+                                <div key={product.id} className="flex justify-between items-center text-sm border-b pb-2">
                                     <div className="flex flex-col">
-                                        <span className="font-medium line-clamp-1">{product!.title}</span>
+                                        <span className="font-medium line-clamp-1">{product.title}</span>
                                         <span className="text-gray-500 text-xs">Qty: {quantity}</span>
                                     </div>
                                     <span className="font-semibold whitespace-nowrap">
-                                        ${(product!.price * quantity).toFixed(2)}
+                                        ${(product.price * quantity).toFixed(2)}
                                     </span>
                                 </div>
                             ))}

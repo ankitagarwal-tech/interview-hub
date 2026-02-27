@@ -29,7 +29,7 @@ function Home() {
             >
               Nested Checkbox Task
             </Link>
-            <OrderDialog products={products} />
+            <OrderDialog />
           </div>
         </div>
       </header>

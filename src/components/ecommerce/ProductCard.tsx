@@ -59,7 +59,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 hover:bg-gray-200 text-gray-600 rounded-md"
-                                onClick={() => addToCart(product.id)}
+                                onClick={() => addToCart(product)}
                             >
                                 <Plus className="h-4 w-4" />
                             </Button>
@@ -67,7 +67,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                     ) : (
                         <Button
                             className="w-full h-10 flex items-center gap-2 group transition-all"
-                            onClick={() => addToCart(product.id)}
+                            onClick={() => addToCart(product)}
                         >
                             <Plus className="h-4 w-4 transition-transform group-hover:scale-125 group-active:scale-90" />
                             <span>Add to Cart</span>
