@@ -40,11 +40,15 @@ function NestedCheckBox() {
 
   const getCheckState = (node: CheckboxNode): boolean | "indeterminate" => {
     // Your implementation here
-    
+    void checkedIds;
+    void setCheckedIds;
+    void node;
     return false; // Placeholder
   };
 
-  const handleToggle = (node: CheckboxNode) => {};
+  const handleToggle = (node: CheckboxNode) => {
+    void node;
+  };
 
   const renderNode = (node: CheckboxNode, depth: number = 0) => {
     const checkState = getCheckState(node);

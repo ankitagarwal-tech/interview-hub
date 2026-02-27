@@ -1,15 +1,13 @@
 # Rules
-- You are allowed to use AI to generate code *only once*
 - You can leverage shadCN component library, It has been already installed in the code base. You need to install the required components directly.
 - The whole design should be completely responsive.
 - Only use tailwind CSS, to style the components.
-- Please create a branch called `solution/<your_name>`
+- Please create a branch called `solution/prashant_garg`
 
 # Scoring
 - You will be judged on 
   - design choices
   - code modularity
-  - time taken to finish the code
 
 # Problem Statement
 1. You need to develop a paginated products page which displays the product card with a plus and minus button below the card image.
@@ -22,9 +20,20 @@
    3. There should be a confirm order button on the dialog
 4. On click of the confirm order button, Its an open choice of what should happen, decide yourself.
 
+# Things to note
+- Make the code as modular as possible.
+- Make the code as reusable as possible.
+- Make the code as maintainable as possible.
+- Make the code as readable as possible.
+- Make the code as performant as possible.
+- Use the provided image (LayoutDesign.png) strictly for the design.
+- You are free to add tailwind CSS classes to the components to make them look better.
+- Use react custom hooks properly to fetch data from the API.
+- Add required loading states while fetching data from the API.
+- For smaller screen sizes, the design should be responsive and should show single product item per row.
 
 
-Components
+# Components to be created. These are for reference, feel free to create your own components.
  - Product
       - Image
       - Buttons
