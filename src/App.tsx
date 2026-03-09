@@ -1,16 +1,19 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import NestedCheckBox from './NestedCheckbox'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import NestedCheckBox from "./NestedCheckbox";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/nested-check-box" element={<NestedCheckBox />} />
-      </Routes>
+      <CartProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/nested-check-box" element={<NestedCheckBox />} />
+        </Routes>
+      </CartProvider>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
