@@ -32,7 +32,7 @@ function Products() {
                         <div className="bg-primary p-1.5 rounded-lg">
                             <Store className="h-5 w-5 text-primary-foreground" />
                         </div>
-                        <h1 className="text-xl font-bold tracking-tight">MarketHub</h1>
+                        <h1 className="text-xl font-bold tracking-tight">Products</h1>
                     </div>
                 </div>
             </header>
