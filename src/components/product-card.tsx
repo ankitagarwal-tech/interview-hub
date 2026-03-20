@@ -1,6 +1,5 @@
 import {
     Card,
-    CardAction,
     CardDescription,
     CardFooter,
     CardHeader,
@@ -9,6 +8,7 @@ import {
 import type { Product } from "@/interface/product"
 import { Button } from "./ui/button"
 import useProductStore from "@/store/product";
+import { Plus, Minus, ShoppingCart } from "lucide-react";
 
 interface ProductCardProps {
     product: Product
@@ -16,52 +16,65 @@ interface ProductCardProps {
 
 export function ProductCard(props: ProductCardProps) {
     const { product } = props;
-    const updateCart = useProductStore((state) => state.updateCart)
+    const addToCart = useProductStore((state) => state.addToCart)
+    const removeFromCart = useProductStore((state) => state.removeFromCart)
     const productsInStore = useProductStore((state) => state.addedProducts)
 
-    const onAddPoduct = (product: Product) => {
-        const isProdAlreadyAddedIndex = productsInStore.findIndex(p => p.product.id === product.id)
-        if (isProdAlreadyAddedIndex !== -1) {
-            const updatedProd = {
-                product,
-                qty: productsInStore[isProdAlreadyAddedIndex].qty + 1
-            }
-            // updateCart({
-            //     product,
-            //     qty: isProdAlreadyAdded.qty + 1
-            // })
-        } else {
-            updateCart({
-                product,
-                qty: 1
-            })
-
-        }
-    }
-
-    const onRemovePoduct = (product: Product) => {
-    }
+    const cartItem = productsInStore.find(p => p.product.id === product.id)
+    const quantity = cartItem ? cartItem.qty : 0
 
     return (
-        <Card className="relative mx-auto w-full max-w-sm pt-0 flex flex-col">
-            <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-            <img
-                src={product.images[0]}
-                alt="Event cover"
-                className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
-            />
-            <CardHeader>
-                {/* <CardAction>
-                    <Badge variant="secondary">Featured</Badge>
-                </CardAction> */}
-                <CardTitle>{product.title}</CardTitle>
-                <CardDescription>
+        <Card className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
+            <div className="relative aspect-square">
+                <img
+                    src={product.thumbnail}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 right-2 flex flex-col gap-2">
+                    <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full shadow-sm">
+                        ${product.price}
+                    </span>
+                    <span className="bg-secondary text-secondary-foreground text-xs font-medium px-2 py-1 rounded-full shadow-sm capitalize">
+                        {product.category}
+                    </span>
+                </div>
+            </div>
+            <CardHeader className="flex-grow p-4">
+                <CardTitle className="line-clamp-1 text-lg">{product.title}</CardTitle>
+                <CardDescription className="line-clamp-2 text-sm">
                     {product.description}
                 </CardDescription>
             </CardHeader>
-            <CardFooter className="flex flex-row justify-end gap-2 mt-auto">
-                <Button className="min-w-2" onClick={() => onRemovePoduct(product)}>-</Button>
-                <Button className="min-w-2" onClick={() => onAddPoduct(product)}>+</Button>
+            <CardFooter className="p-4 pt-0 flex flex-row items-center justify-between gap-2">
+                <div className="flex items-center gap-2 border rounded-md p-1">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => removeFromCart(product.id)}
+                        disabled={quantity === 0}
+                    >
+                        <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-8 text-center font-semibold text-sm">
+                        {quantity}
+                    </span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => addToCart(product)}
+                    >
+                        <Plus className="h-4 w-4" />
+                    </Button>
+                </div>
+                {quantity > 0 && (
+                    <div className="flex items-center text-primary animate-in fade-in zoom-in duration-200">
+                        <ShoppingCart className="h-4 w-4 mr-1" />
+                        <span className="text-xs font-bold">${(product.price * quantity).toFixed(2)}</span>
+                    </div>
+                )}
             </CardFooter>
         </Card>
     )

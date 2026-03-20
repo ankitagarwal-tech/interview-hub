@@ -2,12 +2,15 @@ export interface ApiResponse<T> {
     limit: number;
     skip: number;
     total: number;
-    data: T
+    products: T[];
 }
 
 export interface ProductStore {
     addedProducts: AddedProducts[]
     updateCart: (product: AddedProducts[]) => void
+    addToCart: (product: Product) => void
+    removeFromCart: (productId: number) => void
+    clearCart: () => void
 }
 
 export interface AddedProducts {

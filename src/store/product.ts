@@ -3,12 +3,30 @@ import { create } from 'zustand'
 
 const useProductStore = create<ProductStore>((set) => ({
     addedProducts: [],
-    // updateCart: (product: AddedProducts) => set((state) => ({ addedProducts: state.addedProducts.concat(product) })),
-    // increasePopulation: () => set((state) => ({ addedProducts: state.bears + 1 })),
-    // removeAllBears: () => set({ bears: 0 }),
-
-    // updateBears: (newBears) => set({ bears: newBears }),
-    updateCart: (addedProducts: AddedProducts[]) => set({ addedProducts: addedProducts }),
+    updateCart: (addedProducts: AddedProducts[]) => set({ addedProducts }),
+    addToCart: (product: Product) => set((state) => {
+        const existing = state.addedProducts.find(p => p.product.id === product.id)
+        if (existing) {
+            return {
+                addedProducts: state.addedProducts.map(p =>
+                    p.product.id === product.id ? { ...p, qty: p.qty + 1 } : p
+                )
+            }
+        }
+        return { addedProducts: [...state.addedProducts, { product, qty: 1 }] }
+    }),
+    removeFromCart: (productId: number) => set((state) => {
+        const existing = state.addedProducts.find(p => p.product.id === productId)
+        if (existing && existing.qty > 1) {
+            return {
+                addedProducts: state.addedProducts.map(p =>
+                    p.product.id === productId ? { ...p, qty: p.qty - 1 } : p
+                )
+            }
+        }
+        return { addedProducts: state.addedProducts.filter(p => p.product.id !== productId) }
+    }),
+    clearCart: () => set({ addedProducts: [] })
 }))
 
 export default useProductStore
