@@ -1,5 +1,5 @@
 import type { ChangeEvent, FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +24,7 @@ export default function CartSummaryDialog() {
   const [email, setEmail] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [formError, setFormError] = useState("");
+  const resetTimeoutRef = useRef<number | null>(null);
 
   const cartItems = useCart((state) => state.cartItems);
   const addToCart = useCart((state) => state.addToCart);
@@ -44,12 +45,29 @@ export default function CartSummaryDialog() {
     setFormError("");
   };
 
+  // Added the timeout to reset the state, since otherwise the state is reset before the close animation is finished.
   const handleOpenChange = (nextOpen: boolean) => {
+    if (resetTimeoutRef.current) {
+      window.clearTimeout(resetTimeoutRef.current);
+      resetTimeoutRef.current = null;
+    }
+
     setOpen(nextOpen);
     if (!nextOpen) {
-      resetDialogState();
+      resetTimeoutRef.current = window.setTimeout(() => {
+        resetDialogState();
+        resetTimeoutRef.current = null;
+      }, 200);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (resetTimeoutRef.current) {
+        window.clearTimeout(resetTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleAdd = (itemId: number) => {
     const item = cartItems.find((cartItem) => cartItem.id === itemId);

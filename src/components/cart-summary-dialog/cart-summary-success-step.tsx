@@ -16,13 +16,15 @@ export default function CartSummarySuccessStep({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Thank you</DialogTitle>
-        <DialogDescription className="text-base text-foreground">
-          Your order was placed successfully.
+        <DialogTitle className="text-center">
+          Order Successfully Placed
+        </DialogTitle>
+        <DialogDescription className="my-6 text-base font-semibold text-green-700/80 text-center">
+          Thank you for your order. We will contact you soon.
         </DialogDescription>
       </DialogHeader>
       <DialogFooter className="sm:justify-center">
-        <Button type="button" onClick={onClose}>
+        <Button className="cursor-pointer" type="button" onClick={onClose}>
           Close
         </Button>
       </DialogFooter>

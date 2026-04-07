@@ -54,7 +54,7 @@ export default function CartSummaryCheckoutStep({
           {formError}
         </p>
       )}
-      <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+      <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-between mt-10">
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
