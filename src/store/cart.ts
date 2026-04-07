@@ -1,31 +1,49 @@
 import { create } from "zustand";
 
-interface CartItem {
-  id: string;
+export interface CartItem {
+  id: number;
   name: string;
   price: number;
+  stock: number;
   quantity: number;
+  thumbnail: string;
 }
 
 interface CartState {
   cartItems: CartItem[];
+  addToCart: (item: CartItem) => void;
+  updateCart: (item: CartItem) => void;
+  removeFromCart: (itemId: number) => void;
+  clearCart: () => void;
 }
 
-// Oncce the item is already in the card we only need to update the quantity
-
-const useCart = create((set) => ({
+const useCart = create<CartState>((set) => ({
   cartItems: [],
   addToCart: (item: CartItem) =>
-    set((state: CartState) => ({ cartItems: [...state.cartItems, item] })),
+    set((state) => {
+      const existingItem = state.cartItems.find((i) => i.id === item.id);
+
+      if (existingItem) {
+        return {
+          cartItems: state.cartItems.map((i) =>
+            i.id === item.id
+              ? { ...i, quantity: i.quantity + item.quantity }
+              : i,
+          ),
+        };
+      }
+
+      return { cartItems: [...state.cartItems, item] };
+    }),
   updateCart: (item: CartItem) =>
-    set((state: CartState) => ({
-      cartItems: state.cartItems.map((i: CartItem) =>
-        i.id === item.id ? { ...i, quantity: item.quantity } : i,
-      ),
+    set((state) => ({
+      cartItems: state.cartItems
+        .map((i) => (i.id === item.id ? { ...i, quantity: item.quantity } : i))
+        .filter((i) => i.quantity > 0),
     })),
-  removeFromCart: (item: CartItem) =>
-    set((state: CartState) => ({
-      cartItems: state.cartItems.filter((i: CartItem) => i.id !== item.id),
+  removeFromCart: (itemId: number) =>
+    set((state) => ({
+      cartItems: state.cartItems.filter((i) => i.id !== itemId),
     })),
   clearCart: () => set({ cartItems: [] }),
 }));

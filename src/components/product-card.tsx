@@ -1,33 +1,73 @@
+import type { ChangeEvent } from "react";
 import type { Product } from "@/types/product";
+import useCart from "@/store/cart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState } from "react";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const [quantity, setQuantity] = useState(0);
+  const cartItems = useCart((state) => state.cartItems);
+  const addToCart = useCart((state) => state.addToCart);
+  const updateCart = useCart((state) => state.updateCart);
+  const removeFromCart = useCart((state) => state.removeFromCart);
+  const quantity =
+    cartItems.find((item) => item.id === product.id)?.quantity ?? 0;
 
-  //   product.stock is the maximum quantity of the product that can be added to the cart
   const handleAddToCart = () => {
     if (quantity < product.stock) {
-      setQuantity(quantity + 1);
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        stock: product.stock,
+        quantity: 1,
+        thumbnail: product.thumbnail,
+      });
     }
   };
 
   const handleRemoveFromCart = () => {
     if (quantity > 0) {
-      setQuantity(quantity - 1);
+      if (quantity === 1) {
+        removeFromCart(product.id);
+        return;
+      }
+
+      updateCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        stock: product.stock,
+        quantity: quantity - 1,
+        thumbnail: product.thumbnail,
+      });
     }
   };
-  //   product.stock is the maximum quantity of the product that can be added to the cart
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
-    if (value > product.stock) {
-      setQuantity(product.stock);
-    } else {
-      setQuantity(value);
+
+  const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const rawValue = Number(e.target.value);
+
+    if (Number.isNaN(rawValue)) {
+      return;
     }
+
+    const value = Math.min(Math.max(rawValue, 0), product.stock);
+
+    if (value === 0) {
+      removeFromCart(product.id);
+      return;
+    }
+
+    updateCart({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      stock: product.stock,
+      quantity: value,
+      thumbnail: product.thumbnail,
+    });
   };
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -53,7 +93,7 @@ export default function ProductCard({ product }: { product: Product }) {
               />
               <Button
                 className="cursor-pointer"
-                onClick={handleQuantityChange}
+                onClick={handleAddToCart}
                 variant="outline"
               >
                 +
@@ -69,6 +109,9 @@ export default function ProductCard({ product }: { product: Product }) {
               Add to Cart
             </Button>
           )}
+          <p className="mt-2 text-sm text-center text-muted-foreground">
+            Available Stock: {product.stock}
+          </p>
         </CardContent>
       </CardHeader>
     </Card>
