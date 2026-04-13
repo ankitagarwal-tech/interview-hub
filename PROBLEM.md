@@ -21,3 +21,8 @@
    2. Has a small form with First Name, Last Name, Email ID and Birth date fields
    3. There should be a confirm order button on the dialog
 4. On click of the confirm order button, Its an open choice of what should happen, decide yourself.
+
+
+4 in large
+3 in medium 
+2 in small
