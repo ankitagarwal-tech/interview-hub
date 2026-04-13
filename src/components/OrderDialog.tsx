@@ -10,9 +10,20 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { CalendarIcon } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { cn } from "../lib/utils";
 import type { OrderFormData, CartItem } from "../types/product";
 import { Calendar } from "./ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+
+function formatDisplayDate(isoString: string): string {
+  return new Date(isoString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 interface OrderDialogProps {
   open: boolean;
@@ -78,18 +89,12 @@ export function OrderDialog({ open, onOpenChange }: OrderDialogProps) {
     onOpenChange(false);
   };
 
-  const updateField = (
-    field: keyof OrderFormData,
-    value: string,
-    type?: string,
-  ) => {
+  const updateField = (field: keyof OrderFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
-
-  // 1stjan 2010
 
   if (isSubmitted) {
     return (
@@ -199,34 +204,59 @@ export function OrderDialog({ open, onOpenChange }: OrderDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="birthDate">Birth Date</Label>
-            {/* <Input
-              id="birthDate"
-              // type="date"
-              value={formData.birthDate}
-              onChange={() => setShowDatePicker(!showDatePicker)}
-              aria-invalid={!!errors.birthDate}
-              max="2010-01-01"
-
-            /> */}
-
-            <Button onClick={() => setShowDatePicker(!showDatePicker)}>
-              {formData.birthDate ? formData.birthDate : "Select the date"}
-            </Button>
-
-            {showDatePicker && (
-              <Calendar
-                mode="single"
-                selected={new Date(formData.birthDate)}
-                onSelect={(e) =>
-                  updateField(
-                    "birthDate",
-                    e ? new Date(e).toISOString() : new Date().toISOString(),
-                  )
-                }
-                className="rounded-lg border"
-              />
-            )}
+            <Label>Birth Date</Label>
+            <Popover
+              open={showDatePicker}
+              onOpenChange={setShowDatePicker}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.birthDate && "text-muted-foreground",
+                  )}
+                  aria-invalid={!!errors.birthDate}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {formData.birthDate
+                    ? formatDisplayDate(formData.birthDate)
+                    : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto p-0"
+                side="bottom"
+                align="start"
+                sideOffset={8}
+                avoidCollisions={false}
+              >
+                <Calendar
+                  mode="single"
+                  selected={
+                    formData.birthDate
+                      ? new Date(formData.birthDate)
+                      : undefined
+                  }
+                  onSelect={(date) => {
+                    if (date) {
+                      updateField("birthDate", date.toISOString());
+                    }
+                    setShowDatePicker(false);
+                  }}
+                  startMonth={new Date(1900, 0, 1)}
+                  endMonth={new Date(2010, 0, 1)}
+                  disabled={{ after: new Date(2010, 0, 1) }}
+                  defaultMonth={
+                    formData.birthDate
+                      ? new Date(formData.birthDate)
+                      : new Date(2000, 0, 1)
+                  }
+                  captionLayout="dropdown"
+                />
+              </PopoverContent>
+            </Popover>
 
             {errors.birthDate && (
               <p className="text-xs text-destructive">{errors.birthDate}</p>
