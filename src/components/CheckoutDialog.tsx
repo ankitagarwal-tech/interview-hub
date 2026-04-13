@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -10,29 +11,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
-type Product = {
-  id: number;
-  title: string;
-  price: number;
-};
-
-type Props = {
-  cart: any;
-  products: Product[];
-};
-
-export default function CheckoutDialog({ cart, products }: Props) {
-  
-  console.log("Cart:", cart);
+import { useCart } from "@/context/CartContext";
+export default function CheckoutDialog() {
+  const { cart, clearCart, totalItems } = useCart();
   const [open, setOpen] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const filtered = products.filter((product) => cart[product.id] > 0);
-    setFilteredProducts(filtered);
-  }, [products, cart]);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -41,26 +23,28 @@ export default function CheckoutDialog({ cart, products }: Props) {
     birthDate: "",
   });
 
-  const total = filteredProducts.reduce((sum, item) => sum + item.price * cart[item.id], 0);
+  const cartItems = Object.values(cart);
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
     alert("Order placed successfully!");
+    clearCart();
     setOpen(false);
   };
-
-  if (isLoading) {
-    return <div>Thanks for shopping with us!</div>;
-  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Checkout</Button>
+        <Button disabled={totalItems === 0}>
+          Checkout {totalItems > 0 ? `(${totalItems})` : ""}
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg">
@@ -116,13 +100,19 @@ export default function CheckoutDialog({ cart, products }: Props) {
         <div className="mt-4 border-t pt-4">
           <h3 className="font-semibold mb-2">Cart Summary</h3>
 
-          {filteredProducts.map((item) => (
+          {cartItems.length === 0 && (
+            <p className="text-sm text-slate-500">No products in cart.</p>
+          )}
+
+          {cartItems.map((item) => (
             <div
-              key={item.id}
+              key={item.product.id}
               className="flex justify-between text-sm py-1"
             >
-              <span>{item.title} * {cart[item.id]}</span>
-              <span>${item.price * cart[item.id]}</span>
+              <span>
+                {item.product.title} * {item.quantity}
+              </span>
+              <span>${item.product.price * item.quantity}</span>
             </div>
           ))}
 

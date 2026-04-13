@@ -5,7 +5,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import type { Cart, Product } from "@/lib/types";
+import type { CartWithProduct, Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
 export default function ProductList({
@@ -15,15 +15,17 @@ export default function ProductList({
   cart,
 }: {
   products: Product[];
-  onAdd: (id: number) => void;
+  onAdd: (product: Product) => void;
   onRemove: (id: number) => void;
-  cart: Cart;
+  cart: CartWithProduct;
 }) {
-  console.log("Cart:", cart);
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       {products.map((product) => (
-        <Card key={product.id} className="rounded-2xl shadow-sm">
+        <Card
+          key={product.id}
+          className="rounded-2xl border-slate-200 shadow-sm transition hover:shadow-md"
+        >
           <CardHeader>
             <img
               src={product.thumbnail}
@@ -37,10 +39,14 @@ export default function ProductList({
           <CardContent>
             <p className="text-lg font-semibold">
               ${product.price}{" "}
-              {cart[product.id] ? `Added: (${cart[product.id]})` : ""}
+              {cart[product.id] ? `Added: (${cart[product.id].quantity})` : ""}
             </p>
-            <Button onClick={() => onAdd(product.id)}>+ </Button>
-            <Button className="ml-2" onClick={() => onRemove(product.id)}>
+            <Button onClick={() => onAdd(product)}>+ </Button>
+            <Button
+              className="ml-2"
+              variant="outline"
+              onClick={() => onRemove(product.id)}
+            >
               -
             </Button>
           </CardContent>

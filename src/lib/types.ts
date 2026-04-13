@@ -48,4 +48,13 @@ export interface Product {
   export type Cart = {
     [key: number]: number;
   }
+
+  export interface CartItem {
+    product: Product;
+    quantity: number;
+  }
+
+  export type CartWithProduct = {
+    [key: number]: CartItem;
+  };
   
