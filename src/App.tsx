@@ -7,7 +7,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/nested-check-box" element={<NestedCheckBox />} />
+        {/* <Route path="/nested-check-box" element={<NestedCheckBox />} /> */}
       </Routes>
     </BrowserRouter>
   )
